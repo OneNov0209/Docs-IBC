@@ -1,1549 +1,1171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empeirias Validator Documentation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            /* Updated Color Scheme */
-            --primary: #FFD700; /* Gold/Yellow */
-            --primary-dark: #FFC000;
-            --primary-light: #FFE44D;
-            --secondary: #000000;
-            --accent: #FFD700;
-            --success: #4CAF50;
-            --warning: #FFC107;
-            --danger: #F44336;
-            --info: #2196F3;
-            
-            /* Light Theme */
-            --light-bg: #f9f9f9;
-            --light-text: #333333;
-            --light-sidebar: #ffffff;
-            --light-code-bg: #1e1e1e;
-            --light-header: #ffffff;
-            --light-border: #e0e0e0;
-            
-            /* Dark Theme */
-            --dark-bg: #121212;
-            --dark-text: #f0f0f0;
-            --dark-sidebar: #1a1a1a;
-            --dark-code-bg: #2a2a2a;
-            --dark-header: #1e1e1e;
-            --dark-border: #333333;
-            
-            /* Layout */
-            --sidebar-width: 280px;
-            --header-height: 70px;
-            
-            /* Current Theme */
-            --bg: var(--light-bg);
-            --text: var(--light-text);
-            --sidebar: var(--light-sidebar);
-            --code-bg: var(--light-code-bg);
-            --header-bg: var(--light-header);
-            --border: var(--light-border);
-        }
-        
-        body.dark-mode {
-            --bg: var(--dark-bg);
-            --text: var(--dark-text);
-            --sidebar: var(--dark-sidebar);
-            --code-bg: var(--dark-code-bg);
-            --header-bg: var(--dark-header);
-            --border: var(--dark-border);
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        
-        body {
-            line-height: 1.6;
-            color: var(--text);
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        /* Improved Header */
-        .header {
-            background: var(--header-bg);
-            height: var(--header-height);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            padding: 0 2rem;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-        
-        .header-container {
-            display: flex;
-            width: 100%;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .header-mobile-toggle {
-            display: flex;
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.2rem;
-            margin-right: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .header-mobile-toggle:hover {
-            color: var(--primary);
-        }
-        
-        .header-tabs {
-            display: none;
-            gap: 10px;
-        }
-        
-        .header-tab {
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text);
-        }
-        
-        .header-tab:hover {
-            background: rgba(255, 215, 0, 0.15);
-            color: var(--primary);
-        }
-        
-        .logo-container {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .logo img {
-            height: 32px;
-            transition: transform 0.3s;
-        }
-        
-        .logo:hover img {
-            transform: rotate(-10deg);
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .search-box {
-            position: relative;
-            width: 220px;
-        }
-        
-        .search-box input {
-            width: 100%;
-            padding: 8px 15px 8px 35px;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            background-color: var(--sidebar);
-            color: var(--text);
-            transition: all 0.3s;
-            outline: none;
-        }
-        
-        .search-box input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
-        }
-        
-        .search-box i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text);
-            opacity: 0.7;
-        }
-        
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text);
-            cursor: pointer;
-            font-size: 1rem;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-        
-        .theme-toggle:hover {
-            background: rgba(255, 215, 0, 0.1);
-            color: var(--primary);
-            transform: rotate(30deg);
-        }
-        
-        /* Main Layout */
-        .main-wrapper {
-            display: flex;
-            flex: 1;
-            padding-top: var(--header-height);
-            min-height: calc(100vh - var(--header-height));
-        }
-        
-        /* Enhanced Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--sidebar);
-            border-right: 1px solid var(--border);
-            height: calc(100vh - var(--header-height));
-            position: fixed;
-            overflow-y: auto;
-            padding: 2rem 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            z-index: 999;
-            transform: translateX(-100%);
-        }
-        
-        .sidebar.active {
-            transform: translateX(0);
-            box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-        }
-        
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .sidebar::-webkit-scrollbar-thumb {
-            background-color: var(--primary);
-            border-radius: 3px;
-        }
-        
-        .sidebar-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--primary);
-            margin: 1.5rem 0 1rem 0.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .sidebar-title::before {
-            content: "";
-            display: block;
-            width: 10px;
-            height: 2px;
-            background: var(--primary);
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            margin-bottom: 2.5rem;
-        }
-        
-        .sidebar-menu:last-child {
-            margin-bottom: 0;
-        }
-        
-        .menu-item {
-            margin-bottom: 0.5rem;
-        }
-        
-        .menu-link {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            color: var(--text);
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .menu-link:hover, .menu-link.active {
-            background: rgba(255, 215, 0, 0.15);
-            color: var(--primary);
-            transform: translateX(5px);
-        }
-        
-        .menu-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        
-        .submenu {
-            list-style: none;
-            margin-left: 1.5rem;
-            margin-top: 0.5rem;
-            padding-left: 0.75rem;
-            border-left: 2px solid var(--primary);
-        }
-        
-        /* Improved Content Area */
-        .content {
-            flex: 1;
-            padding: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            transition: margin 0.3s, transform 0.3s;
-        }
-        
-        /* Modified for desktop - sidebar always hidden and toggle always visible */
-        @media (min-width: 993px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .content {
-                margin-left: 0;
-            }
-            
-            .header-mobile-toggle {
-                display: flex;
-            }
-        }
-        
-        .content-inner {
-            background: var(--sidebar);
-            border-radius: 12px;
-            padding: 3rem;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-        
-        .breadcrumbs {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 2rem;
-            font-size: 0.8rem;
-            color: var(--text);
-            opacity: 0.8;
-        }
-        
-        .breadcrumbs a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .breadcrumbs a:hover {
-            text-decoration: underline;
-            color: var(--primary-dark);
-        }
-        
-        .breadcrumbs i {
-            font-size: 0.7rem;
-            color: var(--text);
-            opacity: 0.5;
-        }
-        
-        h1 {
-            color: var(--primary);
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        h1::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
-        }
-        
-        h2 {
-            color: var(--primary);
-            font-size: 1.6rem;
-            margin: 3rem 0 1.5rem;
-            font-weight: 600;
-            padding-top: 1.5rem;
-            border-top: 2px solid var(--border);
-            line-height: 1.3;
-        }
-        
-        h3 {
-            color: var(--text);
-            font-size: 1.2rem;
-            margin: 2.5rem 0 1rem;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-        
-        p {
-            margin-bottom: 1.5rem;
-            color: var(--text);
-            line-height: 1.7;
-            font-size: 1.05rem;
-        }
-        
-        ul, ol {
-            margin: 1.5rem 0 2rem 2rem;
-        }
-        
-        li {
-            margin-bottom: 0.75rem;
-            line-height: 1.7;
-            color: var(--text);
-            font-size: 1.05rem;
-            position: relative;
-        }
-        
-        ul li::before {
-            content: "•";
-            color: var(--primary);
-            font-weight: bold;
-            display: inline-block;
-            width: 1em;
-            margin-left: -1em;
-        }
-        
-        a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-        
-        /* Enhanced Code Blocks */
-        .code-container {
-            position: relative;
-            margin: 2rem 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        pre {
-            background: var(--code-bg);
-            color: #f8f8f2;
-            padding: 1.75rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-size: 0.95rem;
-            border-left: 4px solid var(--primary);
-            line-height: 1.5;
-            margin: 0;
-            font-family: 'Fira Code', monospace;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 215, 0, 0.2);
-            color: var(--primary);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 1;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .copy-btn:hover {
-            background: rgba(255, 215, 0, 0.3);
-        }
-        
-        .copy-btn.copied {
-            background: var(--success);
-            color: #fff;
-        }
-        
-        /* Improved Alert Boxes */
-        .alert {
-            padding: 1.25rem 1.5rem 1.25rem 4.5rem;
-            border-radius: 8px;
-            margin: 2rem 0;
-            position: relative;
-            background: rgba(255, 215, 0, 0.05);
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s;
-        }
-        
-        .alert:hover {
-            transform: translateX(5px);
-        }
-        
-        .alert i {
-            position: absolute;
-            left: 1.5rem;
-            top: 1.5rem;
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
-        
-        .alert-warning {
-            background: rgba(255, 193, 7, 0.05);
-            border-left-color: var(--warning);
-        }
-        
-        .alert-warning i {
-            color: var(--warning);
-        }
-        
-        .alert-success {
-            background: rgba(76, 175, 80, 0.05);
-            border-left-color: var(--success);
-        }
-        
-        .alert-success i {
-            color: var(--success);
-        }
-        
-        .alert-danger {
-            background: rgba(244, 67, 54, 0.05);
-            border-left-color: var(--danger);
-        }
-        
-        .alert-danger i {
-            color: var(--danger);
-        }
-        
-        .alert div {
-            font-size: 1.05rem;
-            line-height: 1.7;
-        }
-        
-        .alert strong {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        /* Enhanced Badges */
-        .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            background-color: var(--primary);
-            color: #000;
-            transition: all 0.2s;
-        }
-        
-        .badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        /* Improved Tables */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 2rem 0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        th, td {
-            border: 1px solid var(--border);
-            padding: 12px 15px;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        
-        th {
-            background-color: var(--primary);
-            color: #000;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-        
-        tr:hover td {
-            background-color: rgba(255, 215, 0, 0.05);
-        }
-        
-        tr:nth-child(even) {
-            background-color: rgba(255, 215, 0, 0.03);
-        }
-        
-        /* Center alignment */
-        .center {
-            text-align: center;
-            margin: 2rem 0;
-        }
-        
-        /* Enhanced Images */
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-        
-        img:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* Horizontal rule */
-        hr {
-            border: 0;
-            height: 1px;
-            background: var(--border);
-            margin: 3rem 0;
-            position: relative;
-        }
-        
-        hr::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100px;
-            height: 2px;
-            background: var(--primary);
-        }
-        
-        /* Improved Footer */
-        .footer {
-            background: var(--header-bg);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            margin-top: 3rem;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .footer-links a {
-            color: var(--text);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 1.1rem;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .copyright {
-            color: var(--text);
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-        
-        /* Overlay for sidebar */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 998;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .content {
-                padding: 2.5rem;
-            }
-            
-            .content-inner {
-                padding: 2.5rem;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .content {
-                margin-left: 0;
-                padding: 2rem;
-            }
-            
-            .content-inner {
-                padding: 2rem;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            :root {
-                --sidebar-width: 260px;
-                --header-height: 65px;
-            }
-            
-            .header {
-                padding: 0 1.5rem;
-            }
-            
-            .search-box {
-                width: 180px;
-            }
-            
-            .content {
-                padding: 1.5rem;
-            }
-            
-            .content-inner {
-                padding: 1.75rem;
-            }
-            
-            h1 {
-                font-size: 1.7rem;
-            }
-            
-            h2 {
-                font-size: 1.4rem;
-            }
-            
-            pre {
-                padding: 1.25rem;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .header {
-                padding: 0 1rem;
-            }
-            
-            .header-actions {
-                gap: 10px;
-            }
-            
-            .search-box {
-                display: none;
-            }
-            
-            .content {
-                padding: 1.25rem;
-            }
-            
-            .content-inner {
-                padding: 1.5rem;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            h2 {
-                font-size: 1.3rem;
-            }
-            
-            pre {
-                padding: 1rem;
-                font-size: 0.85rem;
-            }
-        }
-        
-        /* Animation for page transitions */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .tab-content {
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--sidebar);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OneNov | Active Validator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ===== VARIABLES & RESET ===== */
+    :root {
+      /* Dark Theme */
+      --bg-primary: #0D1017;
+      --bg-secondary: #161B25;
+      --text-primary: #F0F4FF;
+      --text-secondary: #A0A8C0;
+      --accent-gold: #FFD700;
+      --accent-cyan: #00F0FF;
+      --status-online: #00FF88;
+      --status-warning: #FFAA00;
+      --status-error: #FF4D4D;
+      --testnet: #FF00F0;
+      --border-radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Light Theme Variables */
+    .light-mode {
+      --bg-primary: #F5F7FA;
+      --bg-secondary: #FFFFFF;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --accent-gold: #D4A017;
+      --accent-cyan: #0099CC;
+      --status-online: #00994D;
+      --status-warning: #CC7A00;
+      --status-error: #CC0000;
+      --testnet: #CC0099;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* ===== LAYOUT COMPONENTS ===== */
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ===== SIMPLIFIED HEADER ===== */
+    .main-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 16, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+      padding: 1rem 0;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .light-mode .main-header {
+      background: rgba(245, 247, 250, 0.95);
+      border-bottom: 1px solid rgba(212, 160, 23, 0.1);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-gold);
+      transition: border-color 0.3s ease;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(90deg, var(--accent-gold), var(--testnet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 0.5rem;
+      border-radius: 50%;
+    }
+
+    .theme-toggle:hover {
+      color: var(--accent-gold);
+      transform: rotate(30deg);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .dashboard {
+      flex: 1;
+      padding: 3rem 0;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, var(--accent-gold), var(--testnet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .page-title.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-title::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-gold), var(--testnet));
+      transition: background 0.3s ease;
+    }
+
+    /* ===== NETWORK CONTROLS ===== */
+    .network-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+
+    .network-controls.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (min-width: 768px) {
+      .network-controls {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      background: transparent;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(255, 215, 0, 0.1);
+      color: var(--text-primary);
+      border-color: var(--accent-gold);
+    }
+
+    .search-filter {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-bar {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .search-bar::before {
+      content: '\f002';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    .sort-select {
+      padding: 0.75rem 1rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+      min-width: 180px;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* ===== VALIDATOR GRID ===== */
+    .validator-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    /* ===== VALIDATOR CARD ===== */
+    .validator-card {
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      overflow: hidden;
+      transition: var(--transition);
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .validator-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .validator-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border-color: var(--accent-gold);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem 1.5rem 0;
+    }
+
+    .chain-logo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: border-color 0.3s ease;
+    }
+
+    .chain-name {
+      font-weight: 700;
+      font-size: 1.2rem;
+      flex: 1;
+    }
+
+    .network-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .network-badge.testnet {
+      background: rgba(255, 0, 240, 0.1);
+      color: var(--testnet);
+      border: 1px solid var(--testnet);
+    }
+
+    .network-badge.mainnet {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .status-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-online .status-dot::after {
+      background: var(--status-online);
+      box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+    }
+
+    .status-warning .status-dot::after {
+      background: var(--status-warning);
+      box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.7);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+    }
+
+    .node-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .metric {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .light-mode .metric {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .metric span:first-child {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric span:last-child {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 500;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 1rem;
+      padding: 0 1.5rem 1.5rem;
+    }
+
+    .card-actions button {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-guide {
+      background: rgba(255, 215, 0, 0.1);
+      color: var(--accent-gold);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-guide:hover {
+      background: rgba(255, 215, 0, 0.2);
+    }
+
+    .btn-stake {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-stake:hover {
+      background: rgba(0, 240, 255, 0.2);
+    }
+
+    /* ===== FOOTER ===== */
+    .main-footer {
+      background: rgba(22, 27, 37, 0.9);
+      border-top: 1px solid rgba(255, 215, 0, 0.1);
+      padding: 3rem 0;
+      margin-top: 3rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .light-mode .main-footer {
+      background: rgba(255, 255, 255, 0.9);
+      border-top: 1px solid rgba(212, 160, 23, 0.1);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-gold);
+      transition: border-color 0.3s ease;
+    }
+
+    .footer-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--accent-gold), var(--testnet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .footer-about {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 215, 0, 0.1);
+      color: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .social-link:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--accent-gold);
+      transform: translateY(-3px);
+    }
+
+    .footer-links h4 {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      color: var(--text-primary);
+    }
+
+    .footer-links h4::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent-gold);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+      transform: translateX(5px);
+    }
+
+    .footer-links a i {
+      font-size: 0.7rem;
+      color: var(--accent-gold);
+    }
+
+    .footer-newsletter p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .newsletter-input:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+    }
+
+    .newsletter-btn {
+      padding: 0 1.5rem;
+      background: linear-gradient(90deg, var(--accent-gold), var(--testnet));
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .newsletter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 215, 0, 0.1);
+      transition: border-color 0.3s ease;
+    }
+
+    .footer-bottom p {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+
+    .footer-bottom a {
+      color: var(--accent-gold);
+      text-decoration: none;
+    }
+
+    .footer-bottom a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== MOBILE SPECIFIC STYLES ===== */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+
+      .page-title {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+      }
+
+      .network-controls {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .tabs {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .tab-btn {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+        flex: 1;
+        text-align: center;
+      }
+
+      .search-filter {
+        width: 100%;
+      }
+
+      .search-bar input,
+      .sort-select {
+        width: 100%;
+      }
+
+      .validator-card {
+        border-radius: 10px;
+      }
+
+      .card-header {
+        padding: 1rem 1rem 0;
+      }
+
+      .card-body {
+        padding: 1rem;
+      }
+
+      .card-actions {
+        padding: 0 1rem 1rem;
+      }
+
+      .card-actions button {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .validator-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Smaller mobile devices */
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .tab-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .chain-name {
+        font-size: 1.1rem;
+      }
+
+      .status-indicator {
+        font-size: 0.8rem;
+      }
+
+      .metric span:last-child {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
-<body class="light-mode">
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <button class="header-mobile-toggle" id="headerMobileToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="header-tabs">
-                <div class="header-tab" onclick="showTab('introduction')">Introduction</div>
-                <div class="header-tab" onclick="showTab('cheatsheet')">Cheatsheet</div>
-            </div>
-            
-            <div class="logo-container">
-                <div class="header-actions">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search documentation...">
-                    </div>
-                    <button class="theme-toggle" id="themeToggle">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </div>
-                
-                <a href="#" class="logo">
-                    <span>Empeirias</span>
-                    <img src="https://i.ibb.co.com/ch0T19ps/Picsart-25-03-22-00-26-38-360.png" alt="Empeirias Logo">
-                </a>
-            </div>
-        </div>
-    </header>
-    
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
-    <!-- Main Content -->
-    <div class="main-wrapper">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar" id="sidebar">
-            <h3 class="sidebar-title">Getting Started</h3>
-            <ul class="sidebar-menu">
-                <li class="menu-item"><a href="#introduction" class="menu-link active" data-tab="introduction"><i class="fas fa-home"></i> Introduction</a></li>
-                <li class="menu-item"><a href="#requirements" class="menu-link" data-tab="requirements"><i class="fas fa-server"></i> System Requirements</a></li>
-                <li class="menu-item"><a href="#installation" class="menu-link" data-tab="installation"><i class="fas fa-download"></i> Installation</a></li>
-            </ul>
-            
-            <h3 class="sidebar-title">Node Setup</h3>
-            <ul class="sidebar-menu">
-                <li class="menu-item"><a href="#initialization" class="menu-link" data-tab="initialization"><i class="fas fa-cog"></i> Initialization</a></li>
-                <li class="menu-item"><a href="#service" class="menu-link" data-tab="service"><i class="fas fa-rocket"></i> Service Setup</a></li>
-                <li class="menu-item"><a href="#snapshot" class="menu-link" data-tab="snapshot"><i class="fas fa-database"></i> Snapshot</a></li>
-            </ul>
-            
-            <h3 class="sidebar-title">Validator Guide</h3>
-            <ul class="sidebar-menu">
-                <li class="menu-item"><a href="#validator" class="menu-link" data-tab="validator"><i class="fas fa-shield-alt"></i> Create Validator</a></li>
-                <li class="menu-item"><a href="#monitoring" class="menu-link" data-tab="monitoring"><i class="fas fa-chart-line"></i> Monitoring</a></li>
-                <li class="menu-item"><a href="#cheatsheet" class="menu-link" data-tab="cheatsheet"><i class="fas fa-code"></i> Cheatsheet</a></li>
-            </ul>
-            
-            <h3 class="sidebar-title">Resources</h3>
-            <ul class="sidebar-menu">
-                <li class="menu-item"><a href="#explorer" class="menu-link" data-tab="explorer"><i class="fas fa-external-link-alt"></i> Explorer</a></li>
-                <li class="menu-item"><a href="#troubleshooting" class="menu-link" data-tab="troubleshooting"><i class="fas fa-bug"></i> Troubleshooting</a></li>
-            </ul>
-        </aside>
-        
-        <!-- Main Content Area -->
-        <main class="content">
-            <div class="content-inner">
-                <!-- Introduction Tab Component -->
-                <div id="introduction" class="tab-content active">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Introduction</span>
-                    </div>
-                    
-                    <h1>🚀 Empeirias Validator Documentation</h1>
-                    <p>Complete guide to setting up and running your Empeirias validator node</p>
-                    
-                    <div>
-                        <span class="badge" style="background-color: var(--success);">Node Status: Active</span>
-                        <span class="badge" style="background-color: var(--warning); color: #000;">Ubuntu: 22.04</span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="center">
-                        <h3><a href="https://explorer-testnet.empe.io/validators/empevaloper1cjdxm4urpdp42un8xjsdx6469h3nlx2660px64">EXPLORE ON BLOCK EXPLORER</a></h3>
-                        <a href="https://ibb.co.com/KjHkGS06">
-                            <img src="https://i.ibb.co.com/FbtMWCx6/Screenshot-2025-03-24-15-23-30-216-com-android-chrome-edit.jpg" alt="Empeirias Node">
-                        </a>
-                    </div>
-                    
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <div><strong>Before you begin:</strong> Ensure your system meets the minimum requirements below. Ubuntu 22.04 is recommended for best performance.</div>
-                    </div>
-                </div>
-                
-                <!-- Requirements Tab Component -->
-                <div id="requirements" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>System Requirements</span>
-                    </div>
-                    
-                    <h1>System Requirements</h1>
-                    <p>Minimum and recommended hardware specifications for running an Empeirias validator node.</p>
-                    
-                    <table>
-                        <tr>
-                            <th>Component</th>
-                            <th>Minimum</th>
-                            <th>Recommended</th>
-                        </tr>
-                        <tr>
-                            <td><strong>Operating System</strong></td>
-                            <td>Ubuntu 20.04+</td>
-                            <td>Ubuntu 22.04+</td>
-                        </tr>
-                        <tr>
-                            <td><strong>CPU</strong></td>
-                            <td>6 Cores</td>
-                            <td>8+ Cores</td>
-                        </tr>
-                        <tr>
-                            <td><strong>RAM</strong></td>
-                            <td>8GB</td>
-                            <td>16GB+</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Storage</strong></td>
-                            <td>500GB SSD/NVMe</td>
-                            <td>1TB SSD/NVMe</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Network</strong></td>
-                            <td>10 Mbit/s</td>
-                            <td>100 Mbit/s+</td>
-                        </tr>
-                    </table>
-                    
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <div><strong>Important:</strong> Using SSD/NVMe storage is critical for validator performance. HDDs are not recommended.</div>
-                    </div>
-                </div>
-                
-                <!-- Installation Tab Component -->
-                <div id="installation" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Installation</span>
-                    </div>
-                    
-                    <h1>Node Installation</h1>
-                    <p>Step-by-step guide to install the Empeirias node software and dependencies.</p>
-                    
-                    <h2>1. System Preparation</h2>
-                    <p>Update system and install basic dependencies:</p>
-                    <div class="code-container">
-                        <pre><code id="code1">sudo apt update && sudo apt upgrade -y
-sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential \
-bsdmainutils git make ncdu gcc chrony liblz4-tool -y</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code1')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>2. Install Go 1.21.6</h2>
-                    <div class="code-container">
-                        <pre><code id="code2">ver="1.21.6"
-wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
-sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"
-rm "go$ver.linux-amd64.tar.gz"
-echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile
-source $HOME/.bash_profile
-go version</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code2')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>3. Install <code>emped</code> Binary</h2>
-                    <div class="code-container">
-                        <pre><code id="code3">mkdir -p $HOME/go/bin
-curl -LO https://github.com/empe-io/empe-chain-releases/raw/master/v0.3.0/emped_v0.3.0_linux_amd64.tar.gz
-tar -xvf emped_v0.3.0_linux_amd64.tar.gz
-rm emped_v0.3.0_linux_amd64.tar.gz
-chmod +x emped
-mv emped $HOME/go/bin/</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code3')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i>
-                        <div><strong>Tip:</strong> Verify the binary checksum matches the official release before proceeding.</div>
-                    </div>
-                </div>
-                
-                <!-- Initialization Tab Component -->
-                <div id="initialization" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Node Initialization</span>
-                    </div>
-                    
-                    <h1>Node Initialization</h1>
-                    <p>Initialize your node and download the necessary configuration files.</p>
-                    
-                    <h2>4. Initialize Node</h2>
-                    <div class="code-container">
-                        <pre><code id="code4">emped init YOUR_NODE_NAME --chain-id empe-testnet-2</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code4')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>5. Download Genesis File</h2>
-                    <div class="code-container">
-                        <pre><code id="code5">wget -O $HOME/.empe-chain/config/genesis.json "https://raw.githubusercontent.com/empe-io/empe-chains/refs/heads/master/testnet-2/genesis.json"</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code5')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>6. Download Addrbook</h2>
-                    <div class="code-container">
-                        <pre><code id="code6">wget -O $HOME/.empe-chain/config/addrbook.json "https://raw.githubusercontent.com/111STAVR111/props/main/Empeiria/addrbook.json"</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code6')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                </div>
-                
-                <!-- Service Setup Tab Component -->
-                <div id="service" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Service Setup</span>
-                    </div>
-                    
-                    <h1>Service Configuration</h1>
-                    <p>Create a systemd service to manage your node process.</p>
-                    
-                    <h2>7. Create Systemd Service</h2>
-                    <div class="code-container">
-                        <pre><code>sudo tee /etc/systemd/system/emped.service &gt; /dev/null &lt;&lt;EOF
-[Unit]
-Description=emped
-After=network-online.target
-                            
-[Service]
-User=$USER
-ExecStart=$HOME/go/bin/emped start
-Restart=on-failure
-RestartSec=3
-LimitNOFILE=65535
-                            
-[Install]
-WantedBy=multi-user.target
-EOF</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code7')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>8. Start Node</h2>
-                    <div class="code-container">
-                        <pre><code id="code8">sudo systemctl daemon-reload
-sudo systemctl enable emped
-sudo systemctl start emped</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code8')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                </div>
-                
-                <!-- Snapshot Tab Component -->
-                <div id="snapshot" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Snapshot</span>
-                    </div>
-                    
-                    <h1>Snapshot Restoration</h1>
-                    <p>Quickly sync your node using a snapshot instead of syncing from genesis.</p>
-                    
-                    <h2>9. Download Snapshot</h2>
-                    <div class="code-container">
-                        <pre><code id="code9">sudo systemctl stop emped
-cp $HOME/.empe-chain/data/priv_validator_state.json $HOME/.empe-chain/priv_validator_state.json.backup
-rm -rf $HOME/.empe-chain/data
-curl https://server-5.itrocket.net/testnet/empeiria/empeiria_2025-04-04_4319626_snap.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.empe-chain
-mv $HOME/.empe-chain/priv_validator_state.json.backup $HOME/.empe-chain/data/priv_validator_state.json
-sudo systemctl restart emped && sudo journalctl -u emped -f -o cat</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code9')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>10. Check Sync Status</h2>
-                    <div class="code-container">
-                        <pre><code id="code10">emped status 2>&1 | jq</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code10')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    <p>If status shows <code>false</code>, proceed to the next steps.</p>
-                    
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <div><strong>Note:</strong> Snapshot restoration typically takes 30-60 minutes depending on your connection speed and hardware.</div>
-                    </div>
-                </div>
-                
-                <!-- Validator Tab Component -->
-                <div id="validator" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Create Validator</span>
-                    </div>
-                    
-                    <h1>Become a Validator</h1>
-                    <p>Create your validator after your node is fully synced.</p>
-                    
-                    <h2>11. Create Validator</h2>
-                    <div class="code-container">
-                        <pre><code id="code11">emped tx staking create-validator \
---amount 1000000uempe \
---commission-rate 0.1 \
---commission-max-rate 0.5 \
---commission-max-change-rate 0.2 \
---min-self-delegation 1 \
---pubkey $(emped tendermint show-validator) \
---moniker "YOUR_VALIDATOR_NAME" \
---chain-id empe-testnet-2 \
---from YOUR_WALLET_NAME -y</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code11')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <div><strong>Important:</strong> Ensure your node is fully synced before creating a validator. You need at least 1,000,000 uempe to create a validator.</div>
-                    </div>
-                </div>
-                
-                <!-- Monitoring Tab Component -->
-                <div id="monitoring" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Monitoring</span>
-                    </div>
-                    
-                    <h1>Node Monitoring</h1>
-                    <p>Monitor your node's performance and status.</p>
-                    
-                    <h2>12. View Node Logs</h2>
-                    <div class="code-container">
-                        <pre><code id="code12">journalctl -fu emped -o cat</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code12')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>Check Sync Status</h2>
-                    <div class="code-container">
-                        <pre><code id="code13">emped status 2>&1 | jq</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code13')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i>
-                        <div><strong>Tip:</strong> Use tools like <a href="https://grafana.com/" target="_blank">Grafana</a> and <a href="https://prometheus.io/" target="_blank">Prometheus</a> for advanced monitoring.</div>
-                    </div>
-                </div>
-                
-                <!-- Cheatsheet Tab Component -->
-                <div id="cheatsheet" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Cheatsheet</span>
-                    </div>
-                    
-                    <h1>Empeirias Validator Cheatsheet</h1>
-                    <p>Essential commands for managing your Empeirias validator node.</p>
-                    
-                    <h2>Wallet Operations</h2>
-                    <div class="code-container">
-                        <pre><code id="code14"># Create new wallet
-emped keys add wallet_name
-
-# Recover wallet from mnemonic
-emped keys add wallet_name --recover
-
-# List all wallets
-emped keys list
-
-# Check wallet balance
-emped q bank balances $(emped keys show wallet_name -a)</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code14')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>Node Management</h2>
-                    <div class="code-container">
-                        <pre><code id="code15"># Start node service
-sudo systemctl start emped
-
-# Stop node service
-sudo systemctl stop emped
-
-# Restart node service
-sudo systemctl restart emped
-
-# Check node status
-sudo systemctl status emped
-
-# View node logs
-journalctl -fu emped -o cat</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code15')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>Validator Operations</h2>
-                    <div class="code-container">
-                        <pre><code id="code16"># Check validator info
-emped query staking validator $(emped keys show wallet_name --bech val -a)
-
-# Edit validator details
-emped tx staking edit-validator \
-  --moniker "NEW_NAME" \
-  --identity "KEYBASE_ID" \
-  --details "Description" \
-  --website "https://website.com" \
-  --from wallet_name \
-  --chain-id empe-testnet-2
-
-# Unjail validator
-emped tx slashing unjail --from wallet_name --chain-id empe-testnet-2
-
-# Delegate more stake
-emped tx staking delegate \
-  $(emped keys show wallet_name --bech val -a) \
-  1000000uempe \
-  --from wallet_name \
-  --chain-id empe-testnet-2</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code16')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>Transactions</h2>
-                    <div class="code-container">
-                        <pre><code id="code17"># Send tokens
-emped tx bank send wallet_name recipient_address 1000000uempe --chain-id empe-testnet-2
-
-# Vote on proposal
-emped tx gov vote 1 yes --from wallet_name --chain-id empe-testnet-2
-
-# Submit proposal
-emped tx gov submit-proposal \
-  --title "Proposal Title" \
-  --description "Proposal Description" \
-  --type "Text" \
-  --deposit 1000000uempe \
-  --from wallet_name \
-  --chain-id empe-testnet-2</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code17')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    
-                    <h2>Network Info</h2>
-                    <div class="code-container">
-                        <pre><code id="code18"># Check sync status
-emped status 2>&1 | jq
-
-# Check node info
-emped status
-
-# Check validator set
-emped q tendermint-validator-set
-
-# Check latest block
-emped q block</code></pre>
-                        <button class="copy-btn" onclick="copyToClipboard('code18')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                </div>
-                
-                <!-- Explorer Tab Component -->
-                <div id="explorer" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Block Explorer</span>
-                    </div>
-                    
-                    <h1>Block Explorer</h1>
-                    <p>View your validator and network activity on the block explorer.</p>
-                    
-                    <div class="center">
-                        <h3><a href="https://explorer-testnet.empe.io/validators/empevaloper1cjdxm4urpdp42un8xjsdx6469h3nlx2660px64" target="_blank">View on Empeirias Explorer</a></h3>
-                        <a href="https://explorer-testnet.empe.io" target="_blank">
-                            <img src="https://i.ibb.co.com/FbtMWCx6/Screenshot-2025-03-24-15-23-30-216-com-android-chrome-edit.jpg" alt="Empeirias Explorer">
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Troubleshooting Tab Component -->
-                <div id="troubleshooting" class="tab-content">
-                    <div class="breadcrumbs">
-                        <a href="#">Empeirias Docs</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Troubleshooting</span>
-                    </div>
-                    
-                    <h1>Troubleshooting Guide</h1>
-                    <p>Common issues and solutions for Empeirias nodes.</p>
-                    
-                    <h2>Node Not Syncing</h2>
-                    <p>If your node is not syncing, try these steps:</p>
-                    <ol>
-                        <li>Restart the node service: <code>sudo systemctl restart emped</code></li>
-                        <li>Check your peers in <code>addrbook.json</code></li>
-                        <li>Ensure your system time is synchronized: <code>sudo timedatectl set-ntp on</code></li>
-                    </ol>
-                    
-                    <h2>Validator Not Active</h2>
-                    <p>If your validator is not active in the set:</p>
-                    <ul>
-                        <li>Check your self-delegation amount</li>
-                        <li>Ensure your node is not jailed</li>
-                        <li>Verify your commission rate is within limits</li>
-                    </ul>
-                    
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <div><strong>Emergency:</strong> If your validator is jailed, you'll need to unjail it using <code>emped tx slashing unjail --from YOUR_WALLET --chain-id empe-testnet-2</code></div>
-                    </div>
-                </div>
-            </div>
-        </main>
+<body>
+  <!-- Simplified Header Section -->
+  <header class="main-header">
+    <div class="header-content container">
+      <a href="/" class="brand">
+        <img src="https://i.ibb.co.com/ch0T19ps/Picsart-25-03-22-00-26-38-360.png" alt="OneNov Logo">
+        <h1>ONENOV</h1>
+      </a>
+      
+      <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+      </button>
     </div>
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-links">
-            <a href="https://github.com/empe-io" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-            <a href="https://discord.gg/empeirias" target="_blank"><i class="fab fa-discord"></i> Discord</a>
-            <a href="https://twitter.com/empeirias" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-            <a href="https://blog.empe.io" target="_blank"><i class="fas fa-blog"></i> Blog</a>
-        </div>
-        <p class="copyright">© 2025 Empeirias Network. All rights reserved. | Version: v0.3.0</p>
-    </footer>
+  </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile sidebar toggle
-            const headerMobileToggle = document.getElementById('headerMobileToggle');
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
+  <!-- Main Content -->
+  <main class="dashboard">
+    <div class="container">
+      <h1 class="page-title">OneNov Active Validator</h1>
+      
+      <!-- Network Controls -->
+      <section class="network-controls">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="all">All Networks</button>
+          <button class="tab-btn" data-tab="mainnet">Mainnet</button>
+          <button class="tab-btn" data-tab="testnet">Testnet</button>
+        </div>
+
+        <div class="search-filter">
+          <div class="search-bar">
+            <input type="text" placeholder="Search nodes...">
+          </div>
+          <select class="sort-select">
+            <option>Sort by: Uptime</option>
+            <option>Sort by: Name</option>
+            <option>Sort by: Chain</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Validator Nodes Grid -->
+      <div class="validator-grid">
+        <!-- BlockX Node (Mainnet) -->
+        <div class="validator-card" data-network="mainnet">
+          <div class="card-header">
+            <img src="https://i.ibb.co.com/fGLGcVVH/Picsart-25-03-29-22-45-51-494.png" alt="BlockX Logo" class="chain-logo">
+            <span class="chain-name">BLOCKX</span>
+            <span class="network-badge mainnet">MAINNET</span>
+          </div>
+          
+          <div class="card-body">
+            <div class="status-indicator status-online">
+              <span class="status-dot"></span>
+              <span>ACTIVE (99.9% UPTIME)</span>
+            </div>
             
-            headerMobileToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.toggle('active');
-                sidebarOverlay.classList.toggle('active');
-            });
+            <div class="node-metrics">
+              <div class="metric">
+                <span>Blocks</span>
+                <span>223,269</span>
+              </div>
+              <div class="metric">
+                <span>Delegators</span>
+                <span>1,256</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <a href="https://docs.blockxnet.com/validators/quick-start" class="btn-guide" target="_blank">
+              <i class="fas fa-book"></i> Guide
+            </a>
+            <a href="https://ping.blockxnet.com/blockx/staking/blockxvaloper13qk0xhjtwu69x6jzl7cayr90456vzpzp0s9gg7" class="btn-stake" target="_blank">
+              <i class="fas fa-coins"></i> Stake
+            </a>
+          </div>
+        </div>
+
+        <!-- 0G Labs Node (Testnet) -->
+        <div class="validator-card" data-network="testnet">
+          <div class="card-header">
+            <img src="https://i.ibb.co.com/shhqzdR/0-g-labs1711467106027.png" alt="0G Labs Logo" class="chain-logo">
+            <span class="chain-name">0G LABS</span>
+            <span class="network-badge testnet">TESTNET</span>
+          </div>
+          
+          <div class="card-body">
+            <div class="status-indicator status-online">
+              <span class="status-dot"></span>
+              <span>ACTIVE (99.8% UPTIME)</span>
+            </div>
             
-            sidebarOverlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-            });
+            <div class="node-metrics">
+              <div class="metric">
+                <span>Blocks</span>
+                <span>256,890</span>
+              </div>
+              <div class="metric">
+                <span>Delegators</span>
+                <span>892</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <a href="https://www.onenov.xyz/0glabs-validator-tutorial.html" class="btn-guide" target="_blank">
+              <i class="fas fa-book"></i> Guide
+            </a>
+            <a href="https://0g.exploreme.pro/validators/0gvaloper1v04wr7qtqcjllqu5pm947cd3f9klqpefmc3sek" class="btn-stake" target="_blank">
+              <i class="fas fa-coins"></i> Stake
+            </a>
+          </div>
+        </div>
+
+        <!-- Empeirias Node (Testnet) -->
+        <div class="validator-card" data-network="testnet">
+          <div class="card-header">
+            <img src="https://i.ibb.co.com/SDrF8vH9/1-Fqd0v-Wn81-kb-D-OXHJm-Yv-A.png" alt="Empeirias Logo" class="chain-logo">
+            <span class="chain-name">EMPEIRIAS</span>
+            <span class="network-badge testnet">TESTNET</span>
+          </div>
+          
+          <div class="card-body">
+            <div class="status-indicator status-online">
+              <span class="status-dot"></span>
+              <span>ACTIVE (99.7% UPTIME)</span>
+            </div>
             
-            // Close sidebar when clicking a menu item
-            const menuLinks = document.querySelectorAll('.menu-link');
-            menuLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 992) {
-                        sidebar.classList.remove('active');
-                        sidebarOverlay.classList.remove('active');
-                    }
-                });
-            });
+            <div class="node-metrics">
+              <div class="metric">
+                <span>Blocks</span>
+                <span>189,456</span>
+              </div>
+              <div class="metric">
+                <span>Delegators</span>
+                <span>745</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <a href="empeiria/empeiria.html" class="btn-guide" target="_blank">
+              <i class="fas fa-book"></i> Guide
+            </a>
+            <a href="https://explorer-testnet.empe.io/validators/empevaloper1cjdxm4urpdp42un8xjsdx6469h3nlx2660px64" class="btn-stake" target="_blank">
+              <i class="fas fa-coins"></i> Stake
+            </a>
+          </div>
+        </div>
+
+        <!-- Symphony Node (Testnet) -->
+        <div class="validator-card" data-network="testnet">
+          <div class="card-header">
+            <img src="https://i.ibb.co.com/dhb3THh/Picsart-25-03-21-11-27-50-014.png" alt="Symphony Logo" class="chain-logo">
+            <span class="chain-name">SYMPHONY</span>
+            <span class="network-badge testnet">TESTNET</span>
+          </div>
+          
+          <div class="card-body">
+            <div class="status-indicator status-online">
+              <span class="status-dot"></span>
+              <span>ACTIVE (99.6% UPTIME)</span>
+            </div>
             
-            // Theme toggle
-            const themeToggle = document.getElementById('themeToggle');
-            const body = document.body;
+            <div class="node-metrics">
+              <div class="metric">
+                <span>Blocks</span>
+                <span>321,654</span>
+              </div>
+              <div class="metric">
+                <span>Delegators</span>
+                <span>1,024</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <a href="https://www.onenov.xyz/symphony-node-tutorial.html" class="btn-guide" target="_blank">
+              <i class="fas fa-book"></i> Guide
+            </a>
+            <a href="https://testnet.ping.pub/symphony/staking/symphonyvaloper1cjdxm4urpdp42un8xjsdx6469h3nlx26smxv50" class="btn-stake" target="_blank">
+              <i class="fas fa-coins"></i> Stake
+            </a>
+          </div>
+        </div>
+
+        <!-- Kiichain Node (Testnet) -->
+        <div class="validator-card" data-network="testnet">
+          <div class="card-header">
+            <img src="https://i.ibb.co.com/Z1B1r301/Picsart-25-03-21-11-35-55-562.png" alt="Kiichain Logo" class="chain-logo">
+            <span class="chain-name">KIICHAIN</span>
+            <span class="network-badge testnet">TESTNET</span>
+          </div>
+          
+          <div class="card-body">
+            <div class="status-indicator status-online">
+              <span class="status-dot"></span>
+              <span>ACTIVE (99.5% UPTIME)</span>
+            </div>
             
-            // Check for saved theme preference
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                body.classList.add(savedTheme);
-                updateThemeIcon(savedTheme);
-            }
+            <div class="node-metrics">
+              <div class="metric">
+                <span>Blocks</span>
+                <span>456,789</span>
+              </div>
+              <div class="metric">
+                <span>Delegators</span>
+                <span>1,567</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <a href="https://www.onenov.xyz/kiichain.html" class="btn-guide" target="_blank">
+              <i class="fas fa-book"></i> Guide
+            </a>
+            <a href="https://explorer.kiichain.io/staking/kiivaloper1cjdxm4urpdp42un8xjsdx6469h3nlx26cu0axj" class="btn-stake" target="_blank">
+              <i class="fas fa-coins"></i> Stake
+            </a>
+          </div>
+        </div>
+
+        <!-- Coming Soon Node (Mainnet) -->
+        <div class="validator-card" data-network="mainnet">
+          <div class="card-header">
+            <div class="chain-logo" style="background: rgba(255, 215, 0, 0.1); display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-plus" style="color: var(--text-secondary); font-size: 1.2rem;"></i>
+            </div>
+            <span class="chain-name">NEW NODE</span>
+            <span class="network-badge mainnet">COMING SOON</span>
+          </div>
+          
+          <div class="card-body">
+            <div class="status-indicator status-warning">
+              <span class="status-dot"></span>
+              <span>DEPLOYING SOON</span>
+            </div>
             
-            themeToggle.addEventListener('click', function() {
-                if (body.classList.contains('dark-mode')) {
-                    body.classList.remove('dark-mode');
-                    localStorage.setItem('theme', 'light-mode');
-                    updateThemeIcon('light-mode');
-                } else {
-                    body.classList.add('dark-mode');
-                    localStorage.setItem('theme', 'dark-mode');
-                    updateThemeIcon('dark-mode');
-                }
-            });
-            
-            function updateThemeIcon(theme) {
-                const icon = themeToggle.querySelector('i');
-                if (theme === 'dark-mode') {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                } else {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                }
-            }
-            
-            // Tab navigation
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            // Function to show tab and update URL
-            function showTab(tabId) {
-                // Hide all tab contents
-                tabContents.forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                
-                // Show selected tab
-                const selectedTab = document.getElementById(tabId);
-                if (selectedTab) {
-                    selectedTab.classList.add('active');
-                    
-                    // Update URL without page reload
-                    history.pushState(null, null, `#${tabId}`);
-                    
-                    // Scroll to top of content
-                    window.scrollTo(0, 0);
-                }
-                
-                // Update active menu link
-                menuLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('data-tab') === tabId) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-            
-            // Handle menu link clicks
-            menuLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const tabId = this.getAttribute('data-tab');
-                    showTab(tabId);
-                });
-            });
-            
-            // Check URL hash on load
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                showTab(hash);
+            <div class="node-metrics">
+              <div class="metric">
+                <span>Chain</span>
+                <span>---</span>
+              </div>
+              <div class="metric">
+                <span>Status</span>
+                <span>PREPARING</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn-guide" disabled>
+              <i class="fas fa-book"></i> Guide
+            </button>
+            <button class="btn-stake" disabled>
+              <i class="fas fa-coins"></i> Stake
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-about">
+          <div class="footer-brand">
+            <img src="https://i.ibb.co.com/ch0T19ps/Picsart-25-03-22-00-26-38-360.png" alt="OneNov Logo" class="footer-logo">
+            <span class="footer-title">ONENOV</span>
+          </div>
+          <p class="footer-about">
+            Leading blockchain validator node operator providing secure and reliable staking services across multiple networks.
+          </p>
+          <div class="social-links">
+            <a href="https://github.com/onenov0209" class="social-link" title="GitHub" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://twitter.com/Surya021292" class="social-link" title="Twitter" target="_blank">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://t.me/onenov02" class="social-link" title="Telegram" target="_blank">
+              <i class="fab fa-telegram"></i>
+            </a>
+            <a href="https://linktr.ee/onenov" class="social-link" title="Contact" target="_blank">
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Home</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Services</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Blockchain</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Testnet</a></li>
+            <li><a href="https://linktr.ee/onenov"><i class="fas fa-chevron-right"></i> Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://docs.blockxnet.com/validators/quick-start"><i class="fas fa-chevron-right"></i> BlockX Docs</a></li>
+            <li><a href="https://www.onenov.xyz/0glabs-validator-tutorial.html"><i class="fas fa-chevron-right"></i> 0G Labs Docs</a></li>
+            <li><a href="https://www.onenov.xyz/Empeirias.html"><i class="fas fa-chevron-right"></i> Empeirias Docs</a></li>
+            <li><a href="https://www.onenov.xyz/symphony-node-tutorial.html"><i class="fas fa-chevron-right"></i> Symphony Docs</a></li>
+            <li><a href="https://www.onenov.xyz/kiichain.html"><i class="fas fa-chevron-right"></i> Kiichain Docs</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-newsletter">
+          <h4>Stay Updated</h4>
+          <p>Subscribe to our newsletter for the latest updates on new nodes, testnets, and blockchain developments.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your Email" class="newsletter-input" required>
+            <button type="submit" class="newsletter-btn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2023 <a href="#">OneNov</a>. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Theme Toggle Functionality
+      const themeToggle = document.getElementById('themeToggle');
+      const body = document.body;
+
+      // Check for saved theme preference
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        body.classList.toggle('light-mode');
+        if (body.classList.contains('light-mode')) {
+          localStorage.setItem('theme', 'light');
+          themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+          localStorage.setItem('theme', 'dark');
+          themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+      });
+
+      // Tab Switching Functionality
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const validatorCards = document.querySelectorAll('.validator-card');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all tabs
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          // Add active class to clicked tab
+          button.classList.add('active');
+          
+          const filterValue = button.dataset.tab;
+          
+          // Filter cards
+          validatorCards.forEach(card => {
+            if (filterValue === 'all' || card.dataset.network === filterValue) {
+              card.style.display = 'block';
             } else {
-                showTab('introduction');
+              card.style.display = 'none';
             }
-            
-            // Handle back/forward navigation
-            window.addEventListener('popstate', function() {
-                const hash = window.location.hash.substring(1);
-                if (hash) {
-                    showTab(hash);
-                } else {
-                    showTab('introduction');
-                }
-            });
-            
-            // Copy to clipboard function
-            function copyToClipboard(elementId) {
-                const codeElement = document.getElementById(elementId);
-                const text = codeElement.textContent;
-                
-                navigator.clipboard.writeText(text).then(() => {
-                    const btn = codeElement.nextElementSibling;
-                    btn.classList.add('copied');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    
-                    setTimeout(() => {
-                        btn.classList.remove('copied');
-                        btn.innerHTML = '<i class="far fa-copy"></i> Copy';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy: ', err);
-                });
-            }
-            
-            // Handle window resize to hide sidebar on desktop
-            function handleResize() {
-                if (window.innerWidth > 992) {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                }
-            }
-            
-            // Add resize event listener
-            window.addEventListener('resize', handleResize);
-            
-            // Initialize
-            handleResize();
+          });
         });
-    </script>
+      });
+
+      // Search Functionality
+      const searchInput = document.querySelector('.search-bar input');
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        validatorCards.forEach(card => {
+          const chainName = card.querySelector('.chain-name').textContent.toLowerCase();
+          if (chainName.includes(searchTerm)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+
+      // Sort Functionality
+      const sortSelect = document.querySelector('.sort-select');
+      sortSelect.addEventListener('change', (e) => {
+        const sortValue = e.target.value;
+        const cardsContainer = document.querySelector('.validator-grid');
+        const cards = Array.from(document.querySelectorAll('.validator-card'));
+        
+        cards.sort((a, b) => {
+          if (sortValue === 'Sort by: Name') {
+            const nameA = a.querySelector('.chain-name').textContent;
+            const nameB = b.querySelector('.chain-name').textContent;
+            return nameA.localeCompare(nameB);
+          } else if (sortValue === 'Sort by: Uptime') {
+            const uptimeA = parseFloat(a.querySelector('.status-indicator span:last-child').textContent.match(/\d+\.\d+/)[0]);
+            const uptimeB = parseFloat(b.querySelector('.status-indicator span:last-child').textContent.match(/\d+\.\d+/)[0]);
+            return uptimeB - uptimeA;
+          } else if (sortValue === 'Sort by: Chain') {
+            const chainA = a.querySelector('.network-badge').textContent;
+            const chainB = b.querySelector('.network-badge').textContent;
+            return chainA.localeCompare(chainB);
+          }
+          return 0;
+        });
+        
+        // Re-append sorted cards
+        cards.forEach(card => cardsContainer.appendChild(card));
+      });
+
+      // Scroll Animation Functionality
+      const animateOnScroll = () => {
+        const elements = document.querySelectorAll('.page-title, .network-controls, .validator-card');
+        const windowHeight = window.innerHeight;
+        const triggerPoint = windowHeight * 0.8;
+
+        elements.forEach(element => {
+          const elementPosition = element.getBoundingClientRect().top;
+          
+          if (elementPosition < triggerPoint) {
+            element.classList.add('visible');
+          }
+        });
+      };
+
+      // Initialize animations
+      animateOnScroll();
+      window.addEventListener('scroll', animateOnScroll);
+      
+      // Make sure elements are visible if they're already in view on load
+      setTimeout(() => {
+        document.querySelector('.page-title').classList.add('visible');
+        document.querySelector('.network-controls').classList.add('visible');
+      }, 100);
+    });
+  </script>
 </body>
 </html>
