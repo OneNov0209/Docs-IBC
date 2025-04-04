@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empeirias Validator Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Light Theme */
+            --light-bg: #ffffff;
+            --light-text: #121212;
+            --light-sidebar: #f8f8f8;
+            --light-code-bg: #1a1a1a;
+            --light-header: #ffffff;
+            --light-border: #e0e0e0;
+            
+            /* Dark Theme */
+            --dark-bg: #121212;
+            --dark-text: #f8f8f8;
+            --dark-sidebar: #1a1a1a;
+            --dark-code-bg: #2a2a2a;
+            --dark-header: #1a1a1a;
+            --dark-border: #333333;
+            
+            /* Blockchain Colors - Black/Yellow/White Theme */
+            --primary: #FFD700; /* Gold/Yellow */
+            --primary-dark: #FFC000;
+            --primary-light: #FFE44D;
+            --secondary: #000000;
+            --accent: #FFD700;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --danger: #F44336;
+            --info: #2196F3;
+            
+            /* Layout */
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            
+            /* Current Theme (default light) */
+            --bg: var(--light-bg);
+            --text: var(--light-text);
+            --sidebar: var(--light-sidebar);
+            --code-bg: var(--light-code-bg);
+            --header-bg: var(--light-header);
+            --border: var(--light-border);
+        }
+        
+        /* Dark Mode */
+        body.dark-mode {
+            --bg: var(--dark-bg);
+            --text: var(--dark-text);
+            --sidebar: var(--dark-sidebar);
+            --code-bg: var(--dark-code-bg);
+            --header-bg: var(--dark-header);
+            --border: var(--dark-border);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--header-bg);
+            height: var(--header-height);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .header-container {
+            display: flex;
+            width: 100%;
+            align-items: center;
+        }
+        
+        .header-mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .header-tabs {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-tab {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .header-tab:hover {
+            background: rgba(255, 215, 0, 0.15);
+        }
+        
+        .logo-container {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .logo img {
+            height: 30px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 200px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 8px 15px 8px 35px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            background-color: var(--sidebar);
+            color: var(--text);
+            transition: all 0.3s;
+            outline: none;
+        }
+        
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text);
+            opacity: 0.7;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--primary);
+        }
+        
+        /* Main Layout */
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            padding-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 99;
+        }
+        
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin: 1.5rem 0 1rem 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 2.5rem;
+        }
+        
+        .sidebar-menu:last-child {
+            margin-bottom: 0;
+        }
+        
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .menu-link {
+            display: block;
+            padding: 10px 15px;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .menu-link:hover, .menu-link.active {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--primary);
+        }
+        
+        .menu-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        .submenu {
+            list-style: none;
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            padding-left: 0.75rem;
+            border-left: 2px solid var(--primary);
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            transition: margin 0.3s, transform 0.3s;
+        }
+        
+        .content-inner {
+            background: var(--sidebar);
+            border-radius: 10px;
+            padding: 3rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            font-size: 0.75rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+        
+        .breadcrumbs a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumbs i {
+            font-size: 0.6rem;
+            color: var(--text);
+            opacity: 0.5;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 1.7rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin: 3rem 0 1.5rem;
+            font-weight: 600;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
+            line-height: 1.3;
+        }
+        
+        h3 {
+            color: var(--text);
+            font-size: 0.9rem;
+            margin: 2.5rem 0 1.5rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            line-height: 1.7;
+            opacity: 0.9;
+            font-size: 1.05rem;
+        }
+        
+        ul, ol {
+            margin: 1.5rem 0 2rem 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+            color: var(--text);
+            opacity: 0.9;
+            font-size: 1.05rem;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        /* Code Blocks */
+        .code-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            color: #f8f8f2;
+            padding: 1.75rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            border-left: 4px solid var(--primary);
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--primary);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 1;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+        
+        .copy-btn.copied {
+            background: var(--success);
+            color: #fff;
+        }
+        
+        /* Alert Boxes */
+        .alert {
+            padding: 1.25rem 1.5rem 1.25rem 4rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            position: relative;
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .alert i {
+            position: absolute;
+            left: 1.5rem;
+            top: 1.5rem;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.05);
+            border-left-color: var(--warning);
+        }
+        
+        .alert-warning i {
+            color: var(--warning);
+        }
+        
+        .alert-success {
+            background: rgba(76, 175, 80, 0.05);
+            border-left-color: var(--success);
+        }
+        
+        .alert-success i {
+            color: var(--success);
+        }
+        
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.05);
+            border-left-color: var(--danger);
+        }
+        
+        .alert-danger i {
+            color: var(--danger);
+        }
+        
+        .alert div {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        .alert strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            background-color: var(--primary);
+            color: #000;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(255, 215, 0, 0.05);
+        }
+        
+        /* Center alignment */
+        .center {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        /* Images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Horizontal rule */
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border);
+            margin: 3rem 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--header-bg);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            color: var(--text);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 98;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content {
+                padding: 2.5rem;
+            }
+            
+            .content-inner {
+                padding: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+            }
+            
+            .header-mobile-toggle {
+                display: block;
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 2rem;
+            }
+            
+            .content-inner {
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            pre {
+                padding: 1.5rem;
+            }
+            
+            .header-tabs {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 260px;
+                --header-height: 65px;
+            }
+            
+            .header {
+                padding: 0 1.5rem;
+            }
+            
+            .logo {
+                font-size: 1rem;
+            }
+            
+            .logo img {
+                height: 28px;
+            }
+            
+            .search-box {
+                width: 180px;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .content-inner {
+                padding: 1.75rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.6rem;
+            }
+            
+            h3 {
+                font-size: 1.4rem;
+            }
+            
+            pre {
+                padding: 1.25rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header {
+                padding: 0 1rem;
+            }
+            
+            .header-actions {
+                gap: 10px;
+            }
+            
+            .search-box {
+                width: 150px;
+            }
+            
+            .search-box input {
+                padding: 6px 10px 6px 30px;
+                font-size: 0.85rem;
+            }
+            
+            .content {
+                padding: 1.25rem;
+            }
+            
+            .content-inner {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+                margin: 2.5rem 0 1.25rem;
+            }
+            
+            h3 {
+                font-size: 1.3rem;
+            }
+            
+            pre {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <button class="header-mobile-toggle" id="headerMobileToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="header-tabs">
+                <div class="header-tab" onclick="showTab('introduction')">Introduction</div>
+                <div class="header-tab" onclick="showTab('cheatsheet')">Cheatsheet</div>
+            </div>
+            
+            <div class="logo-container">
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search documentation...">
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                
+                <a href="#" class="logo">
+                    <span>Empeirias</span>
+                    <img src="https://i.ibb.co.com/ch0T19ps/Picsart-25-03-22-00-26-38-360.png" alt="Empeirias Logo">
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <h3 class="sidebar-title">Getting Started</h3>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="#introduction" class="menu-link active" data-tab="introduction"><i class="fas fa-home"></i> Introduction</a></li>
+                <li class="menu-item"><a href="#requirements" class="menu-link" data-tab="requirements"><i class="fas fa-server"></i> System Requirements</a></li>
+                <li class="menu-item"><a href="#installation" class="menu-link" data-tab="installation"><i class="fas fa-download"></i> Installation</a></li>
+            </ul>
+            
+            <h3 class="sidebar-title">Node Setup</h3>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="#initialization" class="menu-link" data-tab="initialization"><i class="fas fa-cog"></i> Initialization</a></li>
+                <li class="menu-item"><a href="#service" class="menu-link" data-tab="service"><i class="fas fa-rocket"></i> Service Setup</a></li>
+                <li class="menu-item"><a href="#snapshot" class="menu-link" data-tab="snapshot"><i class="fas fa-database"></i> Snapshot</a></li>
+            </ul>
+            
+            <h3 class="sidebar-title">Validator Guide</h3>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="#validator" class="menu-link" data-tab="validator"><i class="fas fa-shield-alt"></i> Create Validator</a></li>
+                <li class="menu-item"><a href="#monitoring" class="menu-link" data-tab="monitoring"><i class="fas fa-chart-line"></i> Monitoring</a></li>
+                <li class="menu-item"><a href="#cheatsheet" class="menu-link" data-tab="cheatsheet"><i class="fas fa-code"></i> Cheatsheet</a></li>
+            </ul>
+            
+            <h3 class="sidebar-title">Resources</h3>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="#explorer" class="menu-link" data-tab="explorer"><i class="fas fa-external-link-alt"></i> Explorer</a></li>
+                <li class="menu-item"><a href="#troubleshooting" class="menu-link" data-tab="troubleshooting"><i class="fas fa-bug"></i> Troubleshooting</a></li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="content">
+            <div class="content-inner">
+                <!-- Introduction Tab -->
+                <div id="introduction" class="tab-content active">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Introduction</span>
+                    </div>
+                    
+                    <h1>🚀 Empeirias Validator Documentation</h1>
+                    <p>Complete guide to setting up and running your Empeirias validator node</p>
+                    
+                    <div>
+                        <span class="badge" style="background-color: var(--success);">Node Status: Active</span>
+                        <span class="badge" style="background-color: var(--warning); color: #000;">Ubuntu: 22.04</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="center">
+                        <h3><a href="https://explorer-testnet.empe.io/validators/empevaloper1cjdxm4urpdp42un8xjsdx6469h3nlx2660px64">EXPLORE ON BLOCK EXPLORER</a></h3>
+                        <a href="https://ibb.co.com/KjHkGS06">
+                            <img src="https://i.ibb.co.com/FbtMWCx6/Screenshot-2025-03-24-15-23-30-216-com-android-chrome-edit.jpg" alt="Empeirias Node">
+                        </a>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div><strong>Before you begin:</strong> Ensure your system meets the minimum requirements below. Ubuntu 22.04 is recommended for best performance.</div>
+                    </div>
+                </div>
+                
+                <!-- Requirements Tab -->
+                <div id="requirements" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>System Requirements</span>
+                    </div>
+                    
+                    <h1>System Requirements</h1>
+                    <p>Minimum and recommended hardware specifications for running an Empeirias validator node.</p>
+                    
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Minimum</th>
+                            <th>Recommended</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Operating System</strong></td>
+                            <td>Ubuntu 20.04+</td>
+                            <td>Ubuntu 22.04+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CPU</strong></td>
+                            <td>6 Cores</td>
+                            <td>8+ Cores</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RAM</strong></td>
+                            <td>8GB</td>
+                            <td>16GB+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Storage</strong></td>
+                            <td>500GB SSD/NVMe</td>
+                            <td>1TB SSD/NVMe</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network</strong></td>
+                            <td>10 Mbit/s</td>
+                            <td>100 Mbit/s+</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div><strong>Important:</strong> Using SSD/NVMe storage is critical for validator performance. HDDs are not recommended.</div>
+                    </div>
+                </div>
+                
+                <!-- Installation Tab -->
+                <div id="installation" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Installation</span>
+                    </div>
+                    
+                    <h1>Node Installation</h1>
+                    <p>Step-by-step guide to install the Empeirias node software and dependencies.</p>
+                    
+                    <h2>1. System Preparation</h2>
+                    <p>Update system and install basic dependencies:</p>
+                    <div class="code-container">
+                        <pre><code id="code1">sudo apt update && sudo apt upgrade -y
+sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential \
+bsdmainutils git make ncdu gcc chrony liblz4-tool -y</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code1')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>2. Install Go 1.21.6</h2>
+                    <div class="code-container">
+                        <pre><code id="code2">ver="1.21.6"
+wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"
+rm "go$ver.linux-amd64.tar.gz"
+echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile
+source $HOME/.bash_profile
+go version</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code2')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>3. Install <code>emped</code> Binary</h2>
+                    <div class="code-container">
+                        <pre><code id="code3">mkdir -p $HOME/go/bin
+curl -LO https://github.com/empe-io/empe-chain-releases/raw/master/v0.3.0/emped_v0.3.0_linux_amd64.tar.gz
+tar -xvf emped_v0.3.0_linux_amd64.tar.gz
+rm emped_v0.3.0_linux_amd64.tar.gz
+chmod +x emped
+mv emped $HOME/go/bin/</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code3')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Tip:</strong> Verify the binary checksum matches the official release before proceeding.</div>
+                    </div>
+                </div>
+                
+                <!-- Initialization Tab -->
+                <div id="initialization" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Node Initialization</span>
+                    </div>
+                    
+                    <h1>Node Initialization</h1>
+                    <p>Initialize your node and download the necessary configuration files.</p>
+                    
+                    <h2>4. Initialize Node</h2>
+                    <div class="code-container">
+                        <pre><code id="code4">emped init YOUR_NODE_NAME --chain-id empe-testnet-2</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code4')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>5. Download Genesis File</h2>
+                    <div class="code-container">
+                        <pre><code id="code5">wget -O $HOME/.empe-chain/config/genesis.json "https://raw.githubusercontent.com/empe-io/empe-chains/refs/heads/master/testnet-2/genesis.json"</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code5')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>6. Download Addrbook</h2>
+                    <div class="code-container">
+                        <pre><code id="code6">wget -O $HOME/.empe-chain/config/addrbook.json "https://raw.githubusercontent.com/111STAVR111/props/main/Empeiria/addrbook.json"</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code6')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+                
+                <!-- Service Setup Tab -->
+                <div id="service" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Service Setup</span>
+                    </div>
+                    
+                    <h1>Service Configuration</h1>
+                    <p>Create a systemd service to manage your node process.</p>
+                    
+                    <h2>7. Create Systemd Service</h2>
+                    <div class="code-container">
+                        <pre><code id="code7">sudo tee /etc/systemd/system/emped.service > /dev/null <<EOF
+[Unit]
+Description=emped
+After=network-online.target
+
+[Service]
+User=$USER
+ExecStart=$HOME/go/bin/emped start
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+EOF</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code7')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>8. Start Node</h2>
+                    <div class="code-container">
+                        <pre><code id="code8">sudo systemctl daemon-reload
+sudo systemctl enable emped
+sudo systemctl start emped</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code8')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+                
+                <!-- Snapshot Tab -->
+                <div id="snapshot" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Snapshot</span>
+                    </div>
+                    
+                    <h1>Snapshot Restoration</h1>
+                    <p>Quickly sync your node using a snapshot instead of syncing from genesis.</p>
+                    
+                    <h2>9. Download Snapshot</h2>
+                    <div class="code-container">
+                        <pre><code id="code9">sudo systemctl stop emped
+cp $HOME/.empe-chain/data/priv_validator_state.json $HOME/.empe-chain/priv_validator_state.json.backup
+rm -rf $HOME/.empe-chain/data
+curl https://server-5.itrocket.net/testnet/empeiria/empeiria_2025-04-04_4319626_snap.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.empe-chain
+mv $HOME/.empe-chain/priv_validator_state.json.backup $HOME/.empe-chain/data/priv_validator_state.json
+sudo systemctl restart emped && sudo journalctl -u emped -f -o cat</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code9')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>10. Check Sync Status</h2>
+                    <div class="code-container">
+                        <pre><code id="code10">emped status 2>&1 | jq</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code10')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <p>If status shows <code>false</code>, proceed to the next steps.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div><strong>Note:</strong> Snapshot restoration typically takes 30-60 minutes depending on your connection speed and hardware.</div>
+                    </div>
+                </div>
+                
+                <!-- Validator Tab -->
+                <div id="validator" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Create Validator</span>
+                    </div>
+                    
+                    <h1>Become a Validator</h1>
+                    <p>Create your validator after your node is fully synced.</p>
+                    
+                    <h2>11. Create Validator</h2>
+                    <div class="code-container">
+                        <pre><code id="code11">emped tx staking create-validator \
+--amount 1000000uempe \
+--commission-rate 0.1 \
+--commission-max-rate 0.5 \
+--commission-max-change-rate 0.2 \
+--min-self-delegation 1 \
+--pubkey $(emped tendermint show-validator) \
+--moniker "YOUR_VALIDATOR_NAME" \
+--chain-id empe-testnet-2 \
+--from YOUR_WALLET_NAME -y</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code11')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div><strong>Important:</strong> Ensure your node is fully synced before creating a validator. You need at least 1,000,000 uempe to create a validator.</div>
+                    </div>
+                </div>
+                
+                <!-- Monitoring Tab -->
+                <div id="monitoring" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Monitoring</span>
+                    </div>
+                    
+                    <h1>Node Monitoring</h1>
+                    <p>Monitor your node's performance and status.</p>
+                    
+                    <h2>12. View Node Logs</h2>
+                    <div class="code-container">
+                        <pre><code id="code12">journalctl -fu emped -o cat</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code12')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>Check Sync Status</h2>
+                    <div class="code-container">
+                        <pre><code id="code13">emped status 2>&1 | jq</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code13')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Tip:</strong> Use tools like <a href="https://grafana.com/" target="_blank">Grafana</a> and <a href="https://prometheus.io/" target="_blank">Prometheus</a> for advanced monitoring.</div>
+                    </div>
+                </div>
+                
+                <!-- Cheatsheet Tab -->
+                <div id="cheatsheet" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Cheatsheet</span>
+                    </div>
+                    
+                    <h1>Empeirias Validator Cheatsheet</h1>
+                    <p>Essential commands for managing your Empeirias validator node.</p>
+                    
+                    <h2>Wallet Operations</h2>
+                    <div class="code-container">
+                        <pre><code id="code14"># Create new wallet
+emped keys add wallet_name
+
+# Recover wallet from mnemonic
+emped keys add wallet_name --recover
+
+# List all wallets
+emped keys list
+
+# Check wallet balance
+emped q bank balances $(emped keys show wallet_name -a)</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code14')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>Node Management</h2>
+                    <div class="code-container">
+                        <pre><code id="code15"># Start node service
+sudo systemctl start emped
+
+# Stop node service
+sudo systemctl stop emped
+
+# Restart node service
+sudo systemctl restart emped
+
+# Check node status
+sudo systemctl status emped
+
+# View node logs
+journalctl -fu emped -o cat</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code15')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>Validator Operations</h2>
+                    <div class="code-container">
+                        <pre><code id="code16"># Check validator info
+emped query staking validator $(emped keys show wallet_name --bech val -a)
+
+# Edit validator details
+emped tx staking edit-validator \
+  --moniker "NEW_NAME" \
+  --identity "KEYBASE_ID" \
+  --details "Description" \
+  --website "https://website.com" \
+  --from wallet_name \
+  --chain-id empe-testnet-2
+
+# Unjail validator
+emped tx slashing unjail --from wallet_name --chain-id empe-testnet-2
+
+# Delegate more stake
+emped tx staking delegate \
+  $(emped keys show wallet_name --bech val -a) \
+  1000000uempe \
+  --from wallet_name \
+  --chain-id empe-testnet-2</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code16')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>Transactions</h2>
+                    <div class="code-container">
+                        <pre><code id="code17"># Send tokens
+emped tx bank send wallet_name recipient_address 1000000uempe --chain-id empe-testnet-2
+
+# Vote on proposal
+emped tx gov vote 1 yes --from wallet_name --chain-id empe-testnet-2
+
+# Submit proposal
+emped tx gov submit-proposal \
+  --title "Proposal Title" \
+  --description "Proposal Description" \
+  --type "Text" \
+  --deposit 1000000uempe \
+  --from wallet_name \
+  --chain-id empe-testnet-2</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code17')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    
+                    <h2>Network Info</h2>
+                    <div class="code-container">
+                        <pre><code id="code18"># Check sync status
+emped status 2>&1 | jq
+
+# Check node info
+emped status
+
+# Check validator set
+emped q tendermint-validator-set
+
+# Check latest block
+emped q block</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard('code18')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+                
+                <!-- Explorer Tab -->
+                <div id="explorer" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Block Explorer</span>
+                    </div>
+                    
+                    <h1>Block Explorer</h1>
+                    <p>View your validator and network activity on the block explorer.</p>
+                    
+                    <div class="center">
+                        <h3><a href="https://explorer-testnet.empe.io/validators/empevaloper1cjdxm4urpdp42un8xjsdx6469h3nlx2660px64" target="_blank">View on Empeirias Explorer</a></h3>
+                        <a href="https://explorer-testnet.empe.io" target="_blank">
+                            <img src="https://i.ibb.co.com/FbtMWCx6/Screenshot-2025-03-24-15-23-30-216-com-android-chrome-edit.jpg" alt="Empeirias Explorer">
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Troubleshooting Tab -->
+                <div id="troubleshooting" class="tab-content">
+                    <div class="breadcrumbs">
+                        <a href="#">Empeirias Docs</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Troubleshooting</span>
+                    </div>
+                    
+                    <h1>Troubleshooting Guide</h1>
+                    <p>Common issues and solutions for Empeirias nodes.</p>
+                    
+                    <h2>Node Not Syncing</h2>
+                    <p>If your node is not syncing, try these steps:</p>
+                    <ol>
+                        <li>Restart the node service: <code>sudo systemctl restart emped</code></li>
+                        <li>Check your peers in <code>addrbook.json</code></li>
+                        <li>Ensure your system time is synchronized: <code>sudo timedatectl set-ntp on</code></li>
+                    </ol>
+                    
+                    <h2>Validator Not Active</h2>
+                    <p>If your validator is not active in the set:</p>
+                    <ul>
+                        <li>Check your self-delegation amount</li>
+                        <li>Ensure your node is not jailed</li>
+                        <li>Verify your commission rate is within limits</li>
+                    </ul>
+                    
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div><strong>Emergency:</strong> If your validator is jailed, you'll need to unjail it using <code>emped tx slashing unjail --from YOUR_WALLET --chain-id empe-testnet-2</code></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://github.com/empe-io" target="_blank">GitHub</a>
+            <a href="https://discord.gg/empeirias" target="_blank">Discord</a>
+            <a href="https://twitter.com/empeirias" target="_blank">Twitter</a>
+            <a href="https://blog.empe.io" target="_blank">Blog</a>
+        </div>
+        <p class="copyright">© 2025 Empeirias Network. All rights reserved. | Version: v0.3.0</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile sidebar toggle
+            const headerMobileToggle = document.getElementById('headerMobileToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            headerMobileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+            
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+            
+            // Close sidebar when clicking a menu item on mobile
+            const menuLinks = document.querySelectorAll('.menu-link');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 992) {
+                        sidebar.classList.remove('active');
+                        sidebarOverlay.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.classList.add(savedTheme);
+                updateThemeIcon(savedTheme);
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('dark-mode')) {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light-mode');
+                    updateThemeIcon('light-mode');
+                } else {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark-mode');
+                    updateThemeIcon('dark-mode');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector('i');
+                if (theme === 'dark-mode') {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+            
+            // Tab navigation
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Function to show tab and update URL
+            function showTab(tabId) {
+                // Hide all tab contents
+                tabContents.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Show selected tab
+                const selectedTab = document.getElementById(tabId);
+                if (selectedTab) {
+                    selectedTab.classList.add('active');
+                    
+                    // Update URL without page reload
+                    history.pushState(null, null, `#${tabId}`);
+                    
+                    // Scroll to top of content
+                    window.scrollTo(0, 0);
+                }
+                
+                // Update active menu link
+                menuLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-tab') === tabId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            // Handle menu link clicks
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    showTab(tabId);
+                });
+            });
+            
+            // Check URL hash on load
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                showTab(hash);
+            } else {
+                showTab('introduction');
+            }
+            
+            // Handle back/forward navigation
+            window.addEventListener('popstate', function() {
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    showTab(hash);
+                } else {
+                    showTab('introduction');
+                }
+            });
+            
+            // Copy to clipboard function
+            function copyToClipboard(elementId) {
+                const codeElement = document.getElementById(elementId);
+                const text = codeElement.textContent;
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = codeElement.nextElementSibling;
+                    btn.classList.add('copied');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = '<i class="far fa-copy"></i> Copy';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
