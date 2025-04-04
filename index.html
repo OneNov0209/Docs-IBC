@@ -99,7 +99,7 @@
         }
         
         .header-mobile-toggle {
-            display: none;
+            display: flex;
             background: none;
             border: none;
             color: var(--text);
@@ -114,7 +114,7 @@
         }
         
         .header-tabs {
-            display: flex;
+            display: none;
             gap: 10px;
         }
         
@@ -238,6 +238,12 @@
             padding: 2rem 1.5rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             z-index: 999;
+            transform: translateX(-100%);
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.2);
         }
         
         .sidebar::-webkit-scrollbar {
@@ -318,12 +324,26 @@
         /* Improved Content Area */
         .content {
             flex: 1;
-            margin-left: var(--sidebar-width);
             padding: 3rem;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
             transition: margin 0.3s, transform 0.3s;
+        }
+        
+        /* Modified for desktop - sidebar always hidden and toggle always visible */
+        @media (min-width: 993px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .content {
+                margin-left: 0;
+            }
+            
+            .header-mobile-toggle {
+                display: flex;
+            }
         }
         
         .content-inner {
@@ -710,24 +730,6 @@
         }
         
         @media (max-width: 992px) {
-            /* Mobile menu behavior */
-            .header-mobile-toggle {
-                display: flex;
-            }
-            
-            .header-tabs {
-                display: none;
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-                box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-            }
-            
             .content {
                 margin-left: 0;
                 padding: 2rem;
@@ -846,7 +848,7 @@
             background: var(--primary-dark);
         }
     </style>
-    </head>
+</head>
 <body class="light-mode">
     <!-- Header -->
     <header class="header">
@@ -1077,6 +1079,7 @@ mv emped $HOME/go/bin/</code></pre>
                         <button class="copy-btn" onclick="copyToClipboard('code6')"><i class="far fa-copy"></i> Copy</button>
                     </div>
                 </div>
+                
                 <!-- Service Setup Tab Component -->
                 <div id="service" class="tab-content">
                     <div class="breadcrumbs">
@@ -1090,18 +1093,18 @@ mv emped $HOME/go/bin/</code></pre>
                     
                     <h2>7. Create Systemd Service</h2>
                     <div class="code-container">
-                        <pre><code id="code7">sudo tee /etc/systemd/system/emped.service > /dev/null <<EOF
+                        <pre><code>sudo tee /etc/systemd/system/emped.service &gt; /dev/null &lt;&lt;EOF
 [Unit]
 Description=emped
 After=network-online.target
-
+                            
 [Service]
 User=$USER
 ExecStart=$HOME/go/bin/emped start
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535
-
+                            
 [Install]
 WantedBy=multi-user.target
 EOF</code></pre>
@@ -1375,6 +1378,7 @@ emped q block</code></pre>
             </div>
         </main>
     </div>
+    
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-links">
@@ -1404,7 +1408,7 @@ emped q block</code></pre>
                 sidebarOverlay.classList.remove('active');
             });
             
-            // Close sidebar when clicking a menu item on mobile
+            // Close sidebar when clicking a menu item
             const menuLinks = document.querySelectorAll('.menu-link');
             menuLinks.forEach(link => {
                 link.addEventListener('click', function() {
@@ -1526,15 +1530,19 @@ emped q block</code></pre>
                 });
             }
             
-            // Auto-hide sidebar on desktop when clicking content
-            if (window.innerWidth >= 993) {
-                document.querySelector('.content').addEventListener('click', function() {
-                    if (sidebar.classList.contains('active')) {
-                        sidebar.classList.remove('active');
-                        sidebarOverlay.classList.remove('active');
-                    }
-                });
+            // Handle window resize to hide sidebar on desktop
+            function handleResize() {
+                if (window.innerWidth > 992) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
             }
+            
+            // Add resize event listener
+            window.addEventListener('resize', handleResize);
+            
+            // Initialize
+            handleResize();
         });
     </script>
 </body>
